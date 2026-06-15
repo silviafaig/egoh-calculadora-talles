@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EGOH — Calculadora de Talles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #FFFFFF;
+    --black: #000000;
+    --nude: #C4A882;
+    --nude-light: #EDE4D8;
+    --gray-light: #F5F5F5;
+    --gray-mid: #E0E0E0;
+    --gray-text: #888888;
+    --font-title: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Montserrat', Arial, sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--white);
+    color: var(--black);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 24px 80px;
+  }
+
+  .logo {
+    font-family: var(--font-title);
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--black);
+    margin-bottom: 48px;
+    text-decoration: none;
+    display: block;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--white);
+    border: 1px solid var(--gray-mid);
+    padding: 40px 36px;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .section-label {
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--nude);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: var(--font-title);
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--black);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--gray-text);
+    letter-spacing: 0.05em;
+    margin-bottom: 36px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--gray-mid);
+    margin: 28px 0;
+  }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  .cat-btn {
+    background: var(--white);
+    border: 1px solid var(--gray-mid);
+    padding: 18px 12px;
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--black);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    text-align: center;
+  }
+
+  .cat-btn:hover {
+    background: var(--gray-light);
+    border-color: var(--nude);
+  }
+
+  .cat-btn.selected {
+    background: var(--black);
+    border-color: var(--black);
+    color: var(--white);
+  }
+
+  .field-group {
+    margin-bottom: 20px;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--gray-text);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    border: 1px solid var(--gray-mid);
+    border-radius: 0;
+    padding: 12px 14px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--black);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.15s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus { border-color: var(--black); }
+  input[type="number"]::placeholder { color: var(--gray-mid); }
+
+  select {
+    width: 100%;
+    border: 1px solid var(--gray-mid);
+    border-radius: 0;
+    padding: 12px 14px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--black);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    cursor: pointer;
+  }
+
+  select:focus { border-color: var(--black); }
+
+  .field-group-optional .field-label {
+    color: var(--gray-text);
+  }
+
+  .optional-tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--nude);
+    background: var(--nude-light);
+    padding: 2px 7px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .btn-primary {
+    width: 100%;
+    background: var(--black);
+    color: var(--white);
+    border: none;
+    padding: 16px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 8px;
+  }
+
+  .btn-primary:hover { background: #222; }
+
+  .btn-secondary {
+    width: 100%;
+    background: transparent;
+    color: var(--black);
+    border: 1px solid var(--gray-mid);
+    padding: 14px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    margin-top: 10px;
+  }
+
+  .btn-secondary:hover { border-color: var(--black); background: var(--gray-light); }
+
+  .result-category {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--nude);
+    margin-bottom: 12px;
+  }
+
+  .result-number {
+    font-family: var(--font-title);
+    font-size: 72px;
+    font-weight: 300;
+    color: var(--black);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .result-equiv {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--gray-text);
+    letter-spacing: 0.06em;
+    margin-bottom: 28px;
+  }
+
+  .result-note {
+    background: var(--gray-light);
+    border-left: 2px solid var(--nude);
+    padding: 14px 16px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--gray-text);
+    line-height: 1.7;
+    margin-bottom: 0;
+  }
+
+  .error-msg {
+    color: #B94040;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .error-msg.visible { display: block; }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray-text);
+    cursor: pointer;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-body);
+  }
+
+  .back-link:hover { color: var(--black); }
+
+  .footer-brand {
+    margin-top: 48px;
+    font-family: var(--font-title);
+    font-size: 13px;
+    color: var(--gray-mid);
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 32px 16px 60px; }
+    .card { padding: 28px 20px; }
+    h1 { font-size: 26px; }
+    .result-number { font-size: 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="logo" href="#">egoh.</a>
+
+  <div class="card">
+
+    <!-- PANTALLA 1: Selección de categoría -->
+    <div class="screen active" id="screen-category">
+      <div class="section-label">Guía de talles</div>
+      <h1>Encontrá<br>tu talle</h1>
+      <p class="subtitle">Ingresá tus medidas y te ayudamos a elegir</p>
+      <hr class="divider">
+      <div class="section-label" style="margin-bottom:14px;">Elegí una categoría</div>
+      <div class="category-grid">
+        <button class="cat-btn" onclick="selectCategory('bikinis')">Bikinis</button>
+        <button class="cat-btn" onclick="selectCategory('lenceria')">Lencería</button>
+        <button class="cat-btn" onclick="selectCategory('camisolines')">Camisolines</button>
+        <button class="cat-btn" onclick="selectCategory('pijamas')">Pijamas</button>
+      </div>
+    </div>
+
+    <!-- PANTALLA 2: Medidas Bikinis / Lencería -->
+    <div class="screen" id="screen-bikinis-lenceria">
+      <button class="back-link" onclick="goBack()">← Volver</button>
+      <div class="section-label" id="bl-label">Bikinis</div>
+      <h1>Tus medidas</h1>
+      <p class="subtitle">Medí con una cinta métrica flexible, sin apretar</p>
+      <hr class="divider">
+
+      <div class="field-group">
+        <label class="field-label" for="bl-busto">Taza de corpiño</label>
+        <span class="field-hint">Medí el contorno completo a la altura del busto</span>
+        <input type="number" id="bl-busto" placeholder="ej. 90" min="60" max="150">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="bl-cintura">Contorno de cintura</label>
+        <span class="field-hint">La parte más angosta de tu torso</span>
+        <input type="number" id="bl-cintura" placeholder="ej. 76" min="50" max="130">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="bl-cadera">Contorno de cadera</label>
+        <span class="field-hint">La parte más ancha de tu cadera</span>
+        <input type="number" id="bl-cadera" placeholder="ej. 96" min="60" max="150">
+      </div>
+
+      <div class="field-group field-group-optional">
+        <label class="field-label" for="bl-jean">Talle de jean <span class="optional-tag">Opcional</span></label>
+        <span class="field-hint">Basado en contorno de cadera — número argentino</span>
+        <select id="bl-jean">
+          <option value="">— No sé / prefiero no indicar</option>
+          <option value="1">36 / 38</option>
+          <option value="2">38 / 40</option>
+          <option value="3">40 / 42</option>
+          <option value="4">42 / 44</option>
+          <option value="5">46 o más</option>
+        </select>
+      </div>
+
+      <div class="error-msg" id="bl-error">Por favor ingresá todas las medidas para continuar.</div>
+      <button class="btn-primary" onclick="calcularBikinisLenceria()">Calcular mi talle</button>
+    </div>
+
+    <!-- PANTALLA 2b: Medidas Camisolines -->
+    <div class="screen" id="screen-camisolines">
+      <button class="back-link" onclick="goBack()">← Volver</button>
+      <div class="section-label">Camisolines</div>
+      <h1>Tu medida</h1>
+      <p class="subtitle">Medí con una cinta métrica flexible, sin apretar</p>
+      <hr class="divider">
+
+      <div class="field-group">
+        <label class="field-label" for="cam-busto">Contorno de busto</label>
+        <span class="field-hint">Medí el contorno completo a la altura del busto, sobre la ropa interior</span>
+        <input type="number" id="cam-busto" placeholder="ej. 88" min="60" max="150">
+      </div>
+
+      <div class="error-msg" id="cam-error">Por favor ingresá tu medida de busto para continuar.</div>
+      <button class="btn-primary" onclick="calcularCamisolines()">Calcular mi talle</button>
+    </div>
+
+    <!-- PANTALLA 2c: Medidas Pijamas -->
+    <div class="screen" id="screen-pijamas">
+      <button class="back-link" onclick="goBack()">← Volver</button>
+      <div class="section-label">Pijamas</div>
+      <h1>Tu medida</h1>
+      <p class="subtitle">Medí con una cinta métrica flexible, sin apretar</p>
+      <hr class="divider">
+
+      <div class="field-group">
+        <label class="field-label" for="pij-busto">Contorno de busto</label>
+        <span class="field-hint">Medí el contorno completo a la altura del busto, sobre la ropa interior</span>
+        <input type="number" id="pij-busto" placeholder="ej. 90" min="60" max="150">
+      </div>
+
+      <div class="error-msg" id="pij-error">Por favor ingresá tu medida de busto para continuar.</div>
+      <button class="btn-primary" onclick="calcularPijamas()">Calcular mi talle</button>
+    </div>
+
+    <!-- PANTALLA 3: Resultado -->
+    <div class="screen" id="screen-result">
+      <button class="back-link" onclick="goBack()">← Cambiar medidas</button>
+      <div class="section-label" id="result-category-label">Bikinis</div>
+      <p style="font-size:11px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gray-text); margin-bottom:8px;">Tu talle es</p>
+      <div class="result-number" id="result-number">2</div>
+      <div class="result-equiv" id="result-equiv">equivale a M</div>
+      <hr class="divider">
+      <div class="result-note" id="result-note">
+        Si tus medidas están entre dos talles, te recomendamos elegir el talle mayor. Las prendas pueden tener +/−1 cm de diferencia.
+      </div>
+      <button class="btn-secondary" onclick="reiniciar()">Calcular de nuevo</button>
+    </div>
+
+  </div>
+
+  <p class="footer-brand">egoh.</p>
+</div>
+
+<script>
+  var currentCategory = null;
+
+  var tallasBlInfo = {
+    1: { label: '1', equiv: 'S', bustMin: 85, bustMax: 90, cinMin: 68, cinMax: 76, cadMin: 84, cadMax: 92 },
+    2: { label: '2', equiv: 'M', bustMin: 90, bustMax: 95, cinMin: 76, cinMax: 84, cadMin: 92, cadMax: 100 },
+    3: { label: '3', equiv: 'L', bustMin: 95, bustMax: 100, cinMin: 84, cinMax: 92, cadMin: 100, cadMax: 108 },
+    4: { label: '4', equiv: 'XL', bustMin: 100, bustMax: 105, cinMin: 92, cinMax: 100, cadMin: 108, cadMax: 116 }
+  };
+
+  var tallaCamisolines = [
+    { talle: 1, min: 80, max: 84 },
+    { talle: 2, min: 85, max: 89 },
+    { talle: 3, min: 90, max: 94 },
+    { talle: 4, min: 95, max: 99 },
+    { talle: 5, min: 100, max: 104 }
+  ];
+
+  var tallaPijamas = [
+    { talle: 1, equiv: 'S', pantalon: '36/38', max: 87 },
+    { talle: 2, equiv: 'M', pantalon: '38/40', min: 88, max: 92 },
+    { talle: 3, equiv: 'L', pantalon: '40/42', min: 93, max: 97 },
+    { talle: 4, equiv: 'XL', pantalon: '42/44', min: 98, max: 102 },
+    { talle: 5, equiv: 'XXL', pantalon: '46/48', min: 103, max: 107 }
+  ];
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function selectCategory(cat) {
+    currentCategory = cat;
+    if (cat === 'bikinis' || cat === 'lenceria') {
+      document.getElementById('bl-label').textContent = cat === 'bikinis' ? 'Bikinis' : 'Lencería';
+      clearInputs(['bl-busto', 'bl-cintura', 'bl-cadera']);
+      resetJean();
+      document.getElementById('bl-error').classList.remove('visible');
+      showScreen('screen-bikinis-lenceria');
+    } else if (cat === 'camisolines') {
+      clearInputs(['cam-busto']);
+      document.getElementById('cam-error').classList.remove('visible');
+      showScreen('screen-camisolines');
+    } else if (cat === 'pijamas') {
+      clearInputs(['pij-busto']);
+      document.getElementById('pij-error').classList.remove('visible');
+      showScreen('screen-pijamas');
+    }
+  }
+
+  function clearInputs(ids) {
+    ids.forEach(function(id) { document.getElementById(id).value = ''; });
+  }
+
+  function resetJean() {
+    document.getElementById('bl-jean').value = '';
+  }
+
+  function goBack() {
+    var cur = document.querySelector('.screen.active').id;
+    if (cur === 'screen-result') {
+      if (currentCategory === 'bikinis' || currentCategory === 'lenceria') {
+        showScreen('screen-bikinis-lenceria');
+      } else if (currentCategory === 'camisolines') {
+        showScreen('screen-camisolines');
+      } else {
+        showScreen('screen-pijamas');
+      }
+    } else {
+      showScreen('screen-category');
+    }
+  }
+
+  function reiniciar() {
+    currentCategory = null;
+    showScreen('screen-category');
+  }
+
+  function votarTalleBL(valor, campo) {
+    if (campo === 'busto') {
+      for (var t = 1; t <= 4; t++) {
+        if (valor <= tallasBlInfo[t].bustMax) return t;
+      }
+      return 4;
+    }
+    if (campo === 'cintura') {
+      for (var t = 1; t <= 4; t++) {
+        if (valor <= tallasBlInfo[t].cinMax) return t;
+      }
+      return 4;
+    }
+    if (campo === 'cadera') {
+      for (var t = 1; t <= 4; t++) {
+        if (valor <= tallasBlInfo[t].cadMax) return t;
+      }
+      return 4;
+    }
+    return 1;
+  }
+
+  function calcularBikinisLenceria() {
+    var busto = parseFloat(document.getElementById('bl-busto').value);
+    var cintura = parseFloat(document.getElementById('bl-cintura').value);
+    var cadera = parseFloat(document.getElementById('bl-cadera').value);
+    var jeanVal = document.getElementById('bl-jean').value;
+
+    if (!busto || !cintura || !cadera) {
+      document.getElementById('bl-error').classList.add('visible');
+      return;
+    }
+    document.getElementById('bl-error').classList.remove('visible');
+
+    var vBusto = votarTalleBL(busto, 'busto');
+    var vCintura = votarTalleBL(cintura, 'cintura');
+    var vCadera = votarTalleBL(cadera, 'cadera');
+
+    var votos = [vBusto, vCintura, vCadera];
+
+    if (jeanVal !== '') {
+      var vJean = parseInt(jeanVal);
+      if (vJean <= 4) {
+        votos.push(vJean);
+      }
+    }
+
+    var conteo = {};
+    votos.forEach(function(v) { conteo[v] = (conteo[v] || 0) + 1; });
+
+    var talleResult = 1;
+    var maxVotos = 0;
+
+    for (var t in conteo) {
+      if (conteo[t] > maxVotos) {
+        maxVotos = conteo[t];
+        talleResult = parseInt(t);
+      } else if (conteo[t] === maxVotos && parseInt(t) > talleResult) {
+        talleResult = parseInt(t);
+      }
+    }
+
+    var info = tallasBlInfo[talleResult];
+    var catLabel = currentCategory === 'bikinis' ? 'Bikinis' : 'Lencería';
+
+    mostrarResultado(
+      catLabel,
+      info.label,
+      'equivale a ' + info.equiv
+    );
+  }
+
+  function calcularCamisolines() {
+    var busto = parseFloat(document.getElementById('cam-busto').value);
+    if (!busto) {
+      document.getElementById('cam-error').classList.add('visible');
+      return;
+    }
+    document.getElementById('cam-error').classList.remove('visible');
+
+    var talle = 5;
+    for (var i = 0; i < tallaCamisolines.length; i++) {
+      if (busto <= tallaCamisolines[i].max) {
+        talle = tallaCamisolines[i].talle;
+        break;
+      }
+    }
+
+    mostrarResultado('Camisolines', String(talle), '');
+  }
+
+  function calcularPijamas() {
+    var busto = parseFloat(document.getElementById('pij-busto').value);
+    if (!busto) {
+      document.getElementById('pij-error').classList.add('visible');
+      return;
+    }
+    document.getElementById('pij-error').classList.remove('visible');
+
+    var resultado = tallaPijamas[tallaPijamas.length - 1];
+    for (var i = 0; i < tallaPijamas.length; i++) {
+      var t = tallaPijamas[i];
+      var max = t.max || 9999;
+      var min = t.min || 0;
+      if (busto <= max) {
+        resultado = t;
+        break;
+      }
+    }
+
+    var equiv = resultado.equiv + ' · pantalón ' + resultado.pantalon;
+    mostrarResultado('Pijamas', String(resultado.talle), equiv);
+  }
+
+  function mostrarResultado(categoria, talle, equiv) {
+    document.getElementById('result-category-label').textContent = categoria;
+    document.getElementById('result-number').textContent = talle;
+    document.getElementById('result-equiv').textContent = equiv;
+    document.getElementById('result-equiv').style.display = equiv ? 'block' : 'none';
+    showScreen('screen-result');
+  }
+</script>
+</body>
+</html>
