@@ -26,7 +26,7 @@
 
   html, body {
     height: 100%;
-    background: var(--white);
+    background: #FDF9F7;
     color: var(--black);
     font-family: var(--font-body);
     font-size: 14px;
@@ -56,6 +56,7 @@
     border: 1px solid var(--gray-mid);
     padding: 40px 36px;
     border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(139,32,66,0.06);
   }
 
   .screen { display: none; }
@@ -337,9 +338,9 @@
     <div class="screen active" id="screen-category">
       <div class="section-label">Guía de talles</div>
       <h1>Encontrá<br>tu talle</h1>
-      <p class="subtitle">Ingresá tus medidas y te ayudamos a elegir</p>
+      <p class="subtitle">Porque no todas somos iguales — encontrá el talle que realmente va con tu cuerpo.</p>
       <hr class="divider">
-      <div class="section-label" style="margin-bottom:14px;">Elegí una categoría</div>
+      <div class="section-label" style="margin-bottom:14px;">¿Qué querés encontrar?</div>
       <div class="category-grid">
         <button class="cat-btn" onclick="selectCategory('bikinis')">Bikinis</button>
         <button class="cat-btn" onclick="selectCategory('lenceria')">Lencería</button>
@@ -353,7 +354,7 @@
       <button class="back-link" onclick="goBack()">← Volver</button>
       <div class="section-label" id="bl-label">Bikinis</div>
       <h1>Tus medidas</h1>
-      <p class="subtitle">Medí con una cinta métrica flexible, sin apretar</p>
+      <p class="subtitle">Tomá estas medidas con una cinta métrica, tranquila y sin apretar.</p>
       <hr class="divider">
 
       <div class="field-group">
@@ -396,7 +397,7 @@
       <button class="back-link" onclick="goBack()">← Volver</button>
       <div class="section-label">Camisolines</div>
       <h1>Tu medida</h1>
-      <p class="subtitle">Medí con una cinta métrica flexible, sin apretar</p>
+      <p class="subtitle">Tomá estas medidas con una cinta métrica, tranquila y sin apretar.</p>
       <hr class="divider">
 
       <div class="field-group">
@@ -414,7 +415,7 @@
       <button class="back-link" onclick="goBack()">← Volver</button>
       <div class="section-label">Pijamas</div>
       <h1>Tu medida</h1>
-      <p class="subtitle">Medí con una cinta métrica flexible, sin apretar</p>
+      <p class="subtitle">Tomá estas medidas con una cinta métrica, tranquila y sin apretar.</p>
       <hr class="divider">
 
       <div class="field-group">
@@ -436,9 +437,9 @@
       <div class="result-equiv" id="result-equiv">equivale a M</div>
       <hr class="divider">
       <div class="result-note" id="result-note">
-        Si tus medidas están entre dos talles, te recomendamos elegir el talle mayor. Las prendas pueden tener +/−1 cm de diferencia.
+        Si estás entre dos talles, te recomendamos el mayor — vas a sentirte mucho más cómoda. Nuestras prendas tienen una variación de ±1 cm.
       </div>
-      <button class="btn-secondary" onclick="reiniciar()">Calcular de nuevo</button>
+      <button class="btn-secondary" onclick="reiniciar()">Volver a empezar</button>
     </div>
 
   </div>
