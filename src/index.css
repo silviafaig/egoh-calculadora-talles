@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #8B2042;
+  --primary-rgb: 139 32 66;
+  --secondary: #F5E6EA;
+  --secondary-rgb: 245 230 234;
+  --background: #FDF9F7;
+  --background-rgb: 253 249 247;
+  --ring: #8B2042;
+  --ring-rgb: 139 32 66;
+  --foreground: #3A3A3A;
+  --card: #FFFFFF;
+  --border: #E0E0E0;
+  --muted-foreground: #888888;
+  --input-background: #F9F9F9;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
