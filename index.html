@@ -62,13 +62,22 @@
     to   { opacity: 1; transform: scale(1) translateY(0); }
   }
 
-  .modal-inner { padding: 32px 28px 28px; }
+  .modal-inner { padding: 64px 28px 28px; }
 
-  /* Close button */
-  .close-btn {
+  /* Nav buttons (close + back) */
+  .nav-bar {
     position: absolute;
     top: 16px;
+    left: 16px;
     right: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+  }
+  .nav-bar > * { pointer-events: auto; }
+
+  .close-btn, .back-btn {
     background: none;
     border: 1px solid var(--border);
     border-radius: 99px;
@@ -84,7 +93,8 @@
     transition: border-color 0.18s, color 0.18s;
     letter-spacing: 0.02em;
   }
-  .close-btn:hover { border-color: var(--text); color: var(--text); }
+  .close-btn:hover, .back-btn:hover { border-color: var(--text); color: var(--text); }
+  .back-btn { visibility: hidden; }
 
   /* Header */
   .modal-header { margin-bottom: 24px; }
@@ -125,22 +135,17 @@
     margin-bottom: 14px;
   }
 
-  .cat-scroll {
-    display: flex;
+  .cat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
   }
-  .cat-scroll::-webkit-scrollbar { display: none; }
 
   .cat-btn {
-    flex: 0 0 auto;
-    width: 100px;
     background: var(--white);
     border: 1.5px solid var(--border);
     border-radius: 14px;
-    padding: 16px 10px 14px;
+    padding: 18px 10px 16px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -148,6 +153,7 @@
     gap: 10px;
     transition: border-color 0.18s, background 0.18s;
     text-align: center;
+    width: 100%;
   }
   .cat-btn:hover { border-color: var(--acento); background: var(--acento-light); }
   .cat-btn span {
@@ -290,22 +296,6 @@
   }
   .btn-calcular:hover { background: var(--acento-dark); }
 
-  .btn-volver {
-    width: 100%;
-    margin-top: 10px;
-    padding: 11px;
-    background: none;
-    color: var(--gray-text);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    font-family: var(--font);
-    font-size: 12.5px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: border-color 0.18s, color 0.18s;
-  }
-  .btn-volver:hover { border-color: var(--text); color: var(--text); }
-
   /* Result */
   .result-wrap { text-align: left; }
   .result-cat {
@@ -401,7 +391,10 @@
 <body>
 
 <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <button class="close-btn" onclick="cerrarModal()" aria-label="Cerrar">&times; Volver al producto</button>
+  <div class="nav-bar">
+    <button class="back-btn" id="back-btn" onclick="selectCategory(null)" aria-label="Cambiar categor&#237;a">&#8592; Cambiar categor&#237;a</button>
+    <button class="close-btn" onclick="cerrarModal()" aria-label="Cerrar">&times; Volver al producto</button>
+  </div>
 
   <div class="modal-inner">
 
@@ -419,7 +412,7 @@
     <!-- SCREEN: CATEGORÍA -->
     <div id="screen-category" class="screen active">
       <p class="cat-label">&#191;Qu&#233; est&#225;s buscando?</p>
-      <div class="cat-scroll">
+      <div class="cat-grid">
 
         <button class="cat-btn" onclick="selectCategory('bikinis')">
           <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -509,7 +502,6 @@
       </div>
 
       <button class="btn-calcular" onclick="calcularBikinisLenceria()">Ver mi talle</button>
-      <button class="btn-volver" onclick="selectCategory(null)">&#8592; Cambiar categor&#237;a</button>
     </div>
 
     <!-- SCREEN: CAMISOLINES -->
@@ -539,7 +531,6 @@
       <div class="aviso" id="cam-aviso"></div>
 
       <button class="btn-calcular" onclick="calcularCamisolines()">Ver mi talle</button>
-      <button class="btn-volver" onclick="selectCategory(null)">&#8592; Cambiar categor&#237;a</button>
     </div>
 
     <!-- SCREEN: PIJAMAS -->
@@ -566,7 +557,6 @@
       </div>
 
       <button class="btn-calcular" onclick="calcularPijamas()">Ver mi talle</button>
-      <button class="btn-volver" onclick="selectCategory(null)">&#8592; Cambiar categor&#237;a</button>
     </div>
 
     <!-- SCREEN: RESULTADO -->
@@ -616,6 +606,7 @@
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById(id).classList.add('active');
+    document.getElementById('back-btn').style.visibility = (id === 'screen-category') ? 'hidden' : 'visible';
   }
 
   function selectCategory(cat) {
