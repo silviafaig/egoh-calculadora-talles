@@ -1,15 +1,700 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EGOH — Guía de Talles</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EGOH — Guía de Talles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white: #FFFFFF;
+  --text: #3A3A3A;
+  --acento: #8B2042;
+  --acento-dark: #6e1934;
+  --acento-light: #f5e6ea;
+  --border: #E0E0E0;
+  --input-bg: #F9F9F9;
+  --gray-text: #888888;
+  --font: 'Poppins', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+/* ── Modal overlay animation ── */
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+/* ── Modal card ── */
+.modal {
+  position: relative;
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.10);
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  animation: modalIn 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.modal::-webkit-scrollbar { width: 4px; }
+.modal::-webkit-scrollbar-track { background: transparent; }
+.modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ── Close button ── */
+.close-btn {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  float: right;
+  margin: 12px 12px -44px auto;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--gray-text);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  touch-action: manipulation;
+}
+
+.close-btn:hover { background: var(--input-bg); color: var(--text); border-color: var(--text); }
+
+.close-toast {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--text);
+  color: var(--white);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 10px 16px;
+  border-radius: 8px 8px 0 0;
+}
+
+.close-toast.visible { display: block; }
+
+/* ── Inner padding ── */
+.modal-inner {
+  padding: 8px 24px 32px;
+}
+
+/* ── Logo ── */
+.logo-wrap {
+  text-align: center;
+  padding: 28px 0 12px;
+}
+
+.logo-wrap img { height: 44px; }
+
+.logo-text {
+  font-family: var(--font);
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: var(--text);
+}
+
+/* ── Section label ── */
+.section-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.20em;
+  color: var(--acento);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* ── Headings ── */
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--gray-text);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* ── Divider ── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* ── Category grid ── */
+.category-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gray-text);
+  margin-bottom: 12px;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.cat-btn {
+  background: var(--white);
+  border: 1px solid var(--acento);
+  padding: 0 12px;
+  height: 48px;
+  min-height: 48px;
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--acento);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-align: center;
+  border-radius: 8px;
+  touch-action: manipulation;
+}
+
+.cat-btn:hover   { background: var(--acento-light); }
+.cat-btn.selected { background: var(--acento); color: var(--white); }
+
+/* ── Field groups ── */
+.field-group { margin-bottom: 14px; }
+
+.field-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.field-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--gray-text);
+  margin-bottom: 6px;
+}
+
+.field-group-optional .field-label { color: var(--gray-text); }
+
+input[type="number"] {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 14px;
+  height: 48px;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text);
+  background: var(--input-bg);
+  outline: none;
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+input[type="number"]:focus  { border-color: var(--acento); }
+input[type="number"]::placeholder { color: var(--border); }
+
+select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 36px 0 14px;
+  height: 48px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text);
+  background: var(--input-bg);
+  outline: none;
+  transition: border-color 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  cursor: pointer;
+}
+
+select:focus { border-color: var(--acento); }
+
+.optional-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--acento);
+  background: var(--acento-light);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  width: 100%;
+  background: var(--acento);
+  color: var(--white);
+  border: none;
+  height: 50px;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 6px;
+  border-radius: 8px;
+  touch-action: manipulation;
+}
+
+.btn-primary:hover { background: var(--acento-dark); }
+
+.btn-secondary {
+  width: 100%;
+  background: transparent;
+  color: var(--acento);
+  border: 1px solid var(--acento);
+  height: 48px;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 10px;
+  border-radius: 8px;
+  touch-action: manipulation;
+}
+
+.btn-secondary:hover { background: var(--acento-light); }
+
+/* ── Back link ── */
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray-text);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.back-link:hover { color: var(--text); }
+
+/* ── Result ── */
+.result-number {
+  font-size: 80px;
+  font-weight: 600;
+  color: var(--acento);
+  line-height: 1;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.result-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gray-text);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.result-equiv {
+  font-size: 14px;
+  color: var(--gray-text);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.result-note {
+  background: var(--input-bg);
+  border-left: 2px solid var(--acento);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 14px;
+  font-size: 11px;
+  color: var(--gray-text);
+  line-height: 1.7;
+}
+
+/* ── Error ── */
+.error-msg {
+  color: #B94040;
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 10px;
+  display: none;
+}
+.error-msg.visible { display: block; }
+
+/* ── Screens ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── Footer logo ── */
+.footer-logo {
+  text-align: center;
+  padding-top: 20px;
+}
+.footer-logo img { height: 28px; opacity: 0.3; }
+
+/* ── Desktop ── */
+@media (min-width: 480px) {
+  .modal { max-width: 480px; }
+  .modal-inner { padding: 8px 32px 36px; }
+}
+</style>
+</head>
+<body>
+
+<div class="modal" role="dialog" aria-modal="true" aria-label="Guía de talles EGOH">
+
+  <!-- Close button -->
+  <button class="close-btn" onclick="cerrarModal()" aria-label="Cerrar">&#x2715;</button>
+  <div class="close-toast" id="close-toast">Podés cerrar esta pestaña</div>
+
+  <div class="modal-inner">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <a href="#"><img src="LOGO_EGOH_2025.jpg" alt="EGOH" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"><span class="logo-text" style="display:none">egoh.</span></a>
+    </div>
+
+    <!-- PANTALLA 1: categoría -->
+    <div class="screen active" id="screen-category">
+      <div class="section-label" style="text-align:center">Guía de talles</div>
+      <h1>Encontrá<br>tu talle</h1>
+      <p class="subtitle">Ingresá tus medidas y te ayudamos a elegir</p>
+      <hr class="divider">
+      <p class="category-label">Elegí una categoría</p>
+      <div class="category-grid">
+        <button class="cat-btn" onclick="selectCategory('bikinis')">Bikinis</button>
+        <button class="cat-btn" onclick="selectCategory('lenceria')">Lencería</button>
+        <button class="cat-btn" onclick="selectCategory('camisolines')">Camisolines</button>
+        <button class="cat-btn" onclick="selectCategory('pijamas')">Pijamas</button>
+      </div>
+    </div>
+
+    <!-- PANTALLA 2: Bikinis / Lencería -->
+    <div class="screen" id="screen-bikinis-lenceria">
+      <button class="back-link" onclick="goBack()">← Volver</button>
+      <div class="section-label" id="bl-label">Bikinis</div>
+      <h1 style="text-align:left">Tus medidas</h1>
+      <p class="subtitle" style="text-align:left">Medí con una cinta flexible, sin apretar</p>
+      <hr class="divider">
+
+      <div class="field-group">
+        <label class="field-label" for="bl-busto">Taza de corpiño</label>
+        <span class="field-hint">Contorno completo a la altura del busto</span>
+        <input type="number" id="bl-busto" placeholder="ej. 90" min="60" max="150">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="bl-cintura">Contorno de cintura</label>
+        <span class="field-hint">La parte más angosta del torso</span>
+        <input type="number" id="bl-cintura" placeholder="ej. 76" min="50" max="130">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="bl-cadera">Contorno de cadera</label>
+        <span class="field-hint">La parte más ancha, a la altura de los glúteos</span>
+        <input type="number" id="bl-cadera" placeholder="ej. 96" min="60" max="150">
+      </div>
+      <div class="field-group field-group-optional">
+        <label class="field-label" for="bl-jean">Talle de jean <span class="optional-tag">Opcional</span></label>
+        <span class="field-hint">Basado en contorno de cadera — número argentino</span>
+        <select id="bl-jean">
+          <option value="">— No sé / prefiero no indicar</option>
+          <option value="1">36 / 38</option>
+          <option value="2">38 / 40</option>
+          <option value="3">40 / 42</option>
+          <option value="4">42 / 44</option>
+          <option value="5">46 o más</option>
+        </select>
+      </div>
+
+      <div class="error-msg" id="bl-error">Por favor ingresá todas las medidas para continuar.</div>
+      <button class="btn-primary" onclick="calcularBikinisLenceria()">Calcular mi talle</button>
+    </div>
+
+    <!-- PANTALLA 2b: Camisolines -->
+    <div class="screen" id="screen-camisolines">
+      <button class="back-link" onclick="goBack()">← Volver</button>
+      <div class="section-label">Camisolines</div>
+      <h1 style="text-align:left">Tu medida</h1>
+      <p class="subtitle" style="text-align:left">Medí con una cinta flexible, sin apretar</p>
+      <hr class="divider">
+
+      <div class="field-group">
+        <label class="field-label" for="cam-busto">Contorno de busto</label>
+        <span class="field-hint">Contorno completo a la altura del busto, sobre la ropa interior</span>
+        <input type="number" id="cam-busto" placeholder="ej. 88" min="60" max="150">
+      </div>
+
+      <div class="error-msg" id="cam-error">Por favor ingresá tu medida para continuar.</div>
+      <button class="btn-primary" onclick="calcularCamisolines()">Calcular mi talle</button>
+    </div>
+
+    <!-- PANTALLA 2c: Pijamas -->
+    <div class="screen" id="screen-pijamas">
+      <button class="back-link" onclick="goBack()">← Volver</button>
+      <div class="section-label">Pijamas</div>
+      <h1 style="text-align:left">Tu medida</h1>
+      <p class="subtitle" style="text-align:left">Medí con una cinta flexible, sin apretar</p>
+      <hr class="divider">
+
+      <div class="field-group">
+        <label class="field-label" for="pij-busto">Contorno de busto</label>
+        <span class="field-hint">Contorno completo a la altura del busto, sobre la ropa interior</span>
+        <input type="number" id="pij-busto" placeholder="ej. 90" min="60" max="150">
+      </div>
+
+      <div class="error-msg" id="pij-error">Por favor ingresá tu medida para continuar.</div>
+      <button class="btn-primary" onclick="calcularPijamas()">Calcular mi talle</button>
+    </div>
+
+    <!-- PANTALLA 3: Resultado -->
+    <div class="screen" id="screen-result">
+      <button class="back-link" onclick="goBack()">← Cambiar medidas</button>
+      <div class="section-label" id="result-category-label" style="text-align:center">Bikinis</div>
+      <p class="result-label">Tu talle es</p>
+      <div class="result-number" id="result-number">2</div>
+      <div class="result-equiv" id="result-equiv">equivale a M</div>
+      <hr class="divider">
+      <div class="result-note">
+        Si tus medidas están entre dos talles, te recomendamos elegir el talle mayor. Las prendas pueden tener +/−1 cm de diferencia.
+      </div>
+      <button class="btn-secondary" onclick="reiniciar()">Calcular de nuevo</button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-logo">
+      <img src="LOGO_EGOH_2025.jpg" alt="EGOH" onerror="this.style.display='none'">
+    </div>
+
+  </div><!-- /modal-inner -->
+</div><!-- /modal -->
+
+<script>
+  var currentCategory = null;
+
+  var tallasBlInfo = {
+    1: { label: '1', equiv: 'S',  bustMin: 85, bustMax: 90,  cinMin: 68, cinMax: 76,  cadMin: 84,  cadMax: 92  },
+    2: { label: '2', equiv: 'M',  bustMin: 90, bustMax: 95,  cinMin: 76, cinMax: 84,  cadMin: 92,  cadMax: 100 },
+    3: { label: '3', equiv: 'L',  bustMin: 95, bustMax: 100, cinMin: 84, cinMax: 92,  cadMin: 100, cadMax: 108 },
+    4: { label: '4', equiv: 'XL', bustMin: 100,bustMax: 105, cinMin: 92, cinMax: 100, cadMin: 108, cadMax: 116 }
+  };
+
+  var tallaCamisolines = [
+    { talle: 1, max: 84  },
+    { talle: 2, max: 89  },
+    { talle: 3, max: 94  },
+    { talle: 4, max: 99  },
+    { talle: 5, max: 104 }
+  ];
+
+  var tallaPijamas = [
+    { talle: 1, equiv: 'S',   pantalon: '36/38', max: 87  },
+    { talle: 2, equiv: 'M',   pantalon: '38/40', max: 92  },
+    { talle: 3, equiv: 'L',   pantalon: '40/42', max: 97  },
+    { talle: 4, equiv: 'XL',  pantalon: '42/44', max: 102 },
+    { talle: 5, equiv: 'XXL', pantalon: '46/48', max: 107 }
+  ];
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    document.querySelector('.modal').scrollTop = 0;
+  }
+
+  function selectCategory(cat) {
+    currentCategory = cat;
+    if (cat === 'bikinis' || cat === 'lenceria') {
+      document.getElementById('bl-label').textContent = cat === 'bikinis' ? 'Bikinis' : 'Lencería';
+      clearInputs(['bl-busto', 'bl-cintura', 'bl-cadera']);
+      document.getElementById('bl-jean').value = '';
+      document.getElementById('bl-error').classList.remove('visible');
+      showScreen('screen-bikinis-lenceria');
+    } else if (cat === 'camisolines') {
+      clearInputs(['cam-busto']);
+      document.getElementById('cam-error').classList.remove('visible');
+      showScreen('screen-camisolines');
+    } else {
+      clearInputs(['pij-busto']);
+      document.getElementById('pij-error').classList.remove('visible');
+      showScreen('screen-pijamas');
+    }
+  }
+
+  function clearInputs(ids) {
+    ids.forEach(function(id) { document.getElementById(id).value = ''; });
+  }
+
+  function goBack() {
+    var cur = document.querySelector('.screen.active').id;
+    if (cur === 'screen-result') {
+      if (currentCategory === 'bikinis' || currentCategory === 'lenceria') showScreen('screen-bikinis-lenceria');
+      else if (currentCategory === 'camisolines') showScreen('screen-camisolines');
+      else showScreen('screen-pijamas');
+    } else {
+      showScreen('screen-category');
+    }
+  }
+
+  function reiniciar() {
+    currentCategory = null;
+    showScreen('screen-category');
+  }
+
+  function votarTalleBL(valor, campo) {
+    for (var t = 1; t <= 4; t++) {
+      var row = tallasBlInfo[t];
+      var max = campo === 'busto' ? row.bustMax : campo === 'cintura' ? row.cinMax : row.cadMax;
+      if (valor <= max) return t;
+    }
+    return 4;
+  }
+
+  function calcularBikinisLenceria() {
+    var busto   = parseFloat(document.getElementById('bl-busto').value);
+    var cintura = parseFloat(document.getElementById('bl-cintura').value);
+    var cadera  = parseFloat(document.getElementById('bl-cadera').value);
+    var jeanVal = document.getElementById('bl-jean').value;
+
+    if (isNaN(busto) || isNaN(cintura) || isNaN(cadera)) {
+      document.getElementById('bl-error').classList.add('visible');
+      return;
+    }
+    document.getElementById('bl-error').classList.remove('visible');
+
+    var votos = [votarTalleBL(busto, 'busto'), votarTalleBL(cintura, 'cintura'), votarTalleBL(cadera, 'cadera')];
+    if (jeanVal !== '' && parseInt(jeanVal) <= 4) votos.push(parseInt(jeanVal));
+
+    var conteo = {};
+    votos.forEach(function(v) { conteo[v] = (conteo[v] || 0) + 1; });
+
+    var talleResult = 1, maxVotos = 0;
+    for (var t in conteo) {
+      var n = parseInt(t);
+      if (conteo[t] > maxVotos || (conteo[t] === maxVotos && n > talleResult)) {
+        maxVotos = conteo[t];
+        talleResult = n;
+      }
+    }
+
+    var info = tallasBlInfo[talleResult];
+    mostrarResultado(currentCategory === 'bikinis' ? 'Bikinis' : 'Lencería', info.label, 'equivale a ' + info.equiv);
+  }
+
+  function calcularCamisolines() {
+    var busto = parseFloat(document.getElementById('cam-busto').value);
+    if (isNaN(busto)) { document.getElementById('cam-error').classList.add('visible'); return; }
+    document.getElementById('cam-error').classList.remove('visible');
+    var talle = 5;
+    for (var i = 0; i < tallaCamisolines.length; i++) {
+      if (busto <= tallaCamisolines[i].max) { talle = tallaCamisolines[i].talle; break; }
+    }
+    mostrarResultado('Camisolines', String(talle), '');
+  }
+
+  function calcularPijamas() {
+    var busto = parseFloat(document.getElementById('pij-busto').value);
+    if (isNaN(busto)) { document.getElementById('pij-error').classList.add('visible'); return; }
+    document.getElementById('pij-error').classList.remove('visible');
+    var res = tallaPijamas[tallaPijamas.length - 1];
+    for (var i = 0; i < tallaPijamas.length; i++) {
+      if (busto <= tallaPijamas[i].max) { res = tallaPijamas[i]; break; }
+    }
+    mostrarResultado('Pijamas', String(res.talle), res.equiv + ' · pantalón ' + res.pantalon);
+  }
+
+  function mostrarResultado(categoria, talle, equiv) {
+    document.getElementById('result-category-label').textContent = categoria;
+    document.getElementById('result-number').textContent = talle;
+    var equivEl = document.getElementById('result-equiv');
+    equivEl.textContent = equiv;
+    equivEl.style.display = equiv ? 'block' : 'none';
+    showScreen('screen-result');
+  }
+
+  function cerrarModal() {
+    try {
+      window.close();
+      setTimeout(function() {
+        if (!window.closed) {
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            document.getElementById('close-toast').classList.add('visible');
+          }
+        }
+      }, 200);
+    } catch(e) {
+      document.getElementById('close-toast').classList.add('visible');
+    }
+  }
+</script>
+</body>
 </html>
