@@ -383,13 +383,32 @@ select:focus { border-color: var(--acento); }
 
 /* ── Error ── */
 .error-msg {
-  color: #B94040;
+  color: #C0392B;
   font-size: 11px;
   font-weight: 500;
   margin-top: 10px;
   display: none;
 }
 .error-msg.visible { display: block; }
+
+input[type="number"].field-error,
+input[type="number"].field-error:focus {
+  border: 1px solid #C0392B !important;
+  outline: none !important;
+}
+
+.aviso {
+  background: #F9F9F9;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 11px;
+  color: var(--gray-text);
+  line-height: 1.7;
+  margin-top: 12px;
+  display: none;
+}
+.aviso.visible { display: block; }
 
 /* ── Screens ── */
 .screen { display: none; }
@@ -450,17 +469,17 @@ select:focus { border-color: var(--acento); }
       <div class="field-group">
         <label class="field-label" for="bl-busto">Taza de corpiño</label>
         <span class="field-hint">Contorno completo a la altura del busto</span>
-        <input type="number" id="bl-busto" placeholder="ej. 90" min="60" max="150">
+        <input type="number" id="bl-busto" placeholder="ej. 90" min="60" max="150" oninput="checkBLError()">
       </div>
       <div class="field-group">
         <label class="field-label" for="bl-cintura">Contorno de cintura</label>
         <span class="field-hint">La parte más angosta del torso</span>
-        <input type="number" id="bl-cintura" placeholder="ej. 76" min="50" max="130">
+        <input type="number" id="bl-cintura" placeholder="ej. 76" min="50" max="130" oninput="checkBLError()">
       </div>
       <div class="field-group">
         <label class="field-label" for="bl-cadera">Contorno de cadera</label>
         <span class="field-hint">La parte más ancha, a la altura de los glúteos</span>
-        <input type="number" id="bl-cadera" placeholder="ej. 96" min="60" max="150">
+        <input type="number" id="bl-cadera" placeholder="ej. 96" min="60" max="150" oninput="checkBLError()">
       </div>
       <div class="field-group field-group-optional">
         <label class="field-label" for="bl-jean">Talle de jean <span class="optional-tag">Opcional</span></label>
@@ -475,7 +494,7 @@ select:focus { border-color: var(--acento); }
         </select>
       </div>
 
-      <div class="error-msg" id="bl-error">Por favor ingresá todas las medidas para continuar.</div>
+      <div class="error-msg" id="bl-error">Por favor completá todos los campos para calcular tu talle.</div>
       <button class="btn-primary" onclick="calcularBikinisLenceria()">Calcular mi talle</button>
     </div>
 
@@ -490,10 +509,15 @@ select:focus { border-color: var(--acento); }
       <div class="field-group">
         <label class="field-label" for="cam-busto">Contorno de busto</label>
         <span class="field-hint">Contorno completo a la altura del busto, sobre la ropa interior</span>
-        <input type="number" id="cam-busto" placeholder="ej. 88" min="60" max="150">
+        <input type="number" id="cam-busto" placeholder="ej. 88" min="60" max="150" oninput="checkCamError()">
+      </div>
+      <div class="field-group field-group-optional">
+        <label class="field-label" for="cam-altura">Altura <span class="optional-tag">Opcional</span></label>
+        <span class="field-hint">Tu altura en centímetros</span>
+        <input type="number" id="cam-altura" placeholder="ej. 165" min="140" max="210">
       </div>
 
-      <div class="error-msg" id="cam-error">Por favor ingresá tu medida para continuar.</div>
+      <div class="error-msg" id="cam-error">Por favor completá todos los campos para calcular tu talle.</div>
       <button class="btn-primary" onclick="calcularCamisolines()">Calcular mi talle</button>
     </div>
 
@@ -508,10 +532,15 @@ select:focus { border-color: var(--acento); }
       <div class="field-group">
         <label class="field-label" for="pij-busto">Contorno de busto</label>
         <span class="field-hint">Contorno completo a la altura del busto, sobre la ropa interior</span>
-        <input type="number" id="pij-busto" placeholder="ej. 90" min="60" max="150">
+        <input type="number" id="pij-busto" placeholder="ej. 90" min="60" max="150" oninput="checkPijError()">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="pij-cadera">Contorno de cadera</label>
+        <span class="field-hint">La parte más ancha, a la altura de los glúteos</span>
+        <input type="number" id="pij-cadera" placeholder="ej. 96" min="60" max="150" oninput="checkPijError()">
       </div>
 
-      <div class="error-msg" id="pij-error">Por favor ingresá tu medida para continuar.</div>
+      <div class="error-msg" id="pij-error">Por favor completá todos los campos para calcular tu talle.</div>
       <button class="btn-primary" onclick="calcularPijamas()">Calcular mi talle</button>
     </div>
 
@@ -526,6 +555,7 @@ select:focus { border-color: var(--acento); }
       <div class="result-note">
         Si tus medidas están entre dos talles, te recomendamos elegir el talle mayor. Las prendas pueden tener +/−1 cm de diferencia.
       </div>
+      <div class="aviso" id="result-aviso"></div>
       <button class="btn-secondary" onclick="reiniciar()">Calcular de nuevo</button>
     </div>
 
@@ -574,15 +604,18 @@ select:focus { border-color: var(--acento); }
     if (cat === 'bikinis' || cat === 'lenceria') {
       document.getElementById('bl-label').textContent = cat === 'bikinis' ? 'Bikinis' : 'Lencería';
       clearInputs(['bl-busto', 'bl-cintura', 'bl-cadera']);
+      clearFieldErrors(['bl-busto', 'bl-cintura', 'bl-cadera']);
       document.getElementById('bl-jean').value = '';
       document.getElementById('bl-error').classList.remove('visible');
       showScreen('screen-bikinis-lenceria');
     } else if (cat === 'camisolines') {
-      clearInputs(['cam-busto']);
+      clearInputs(['cam-busto', 'cam-altura']);
+      clearFieldErrors(['cam-busto']);
       document.getElementById('cam-error').classList.remove('visible');
       showScreen('screen-camisolines');
     } else {
-      clearInputs(['pij-busto']);
+      clearInputs(['pij-busto', 'pij-cadera']);
+      clearFieldErrors(['pij-busto', 'pij-cadera']);
       document.getElementById('pij-error').classList.remove('visible');
       showScreen('screen-pijamas');
     }
@@ -590,6 +623,10 @@ select:focus { border-color: var(--acento); }
 
   function clearInputs(ids) {
     ids.forEach(function(id) { document.getElementById(id).value = ''; });
+  }
+
+  function clearFieldErrors(ids) {
+    ids.forEach(function(id) { document.getElementById(id).classList.remove('field-error'); });
   }
 
   function goBack() {
@@ -617,16 +654,51 @@ select:focus { border-color: var(--acento); }
     return 4;
   }
 
+  function tallePorCadera(cadera) {
+    for (var t = 1; t <= 4; t++) {
+      if (cadera <= tallasBlInfo[t].cadMax) return t;
+    }
+    return 4;
+  }
+
+  /* ── Validación en tiempo real ── */
+  function checkBLError() {
+    var b  = document.getElementById('bl-busto').value;
+    var c  = document.getElementById('bl-cintura').value;
+    var ca = document.getElementById('bl-cadera').value;
+    if (b)  document.getElementById('bl-busto').classList.remove('field-error');
+    if (c)  document.getElementById('bl-cintura').classList.remove('field-error');
+    if (ca) document.getElementById('bl-cadera').classList.remove('field-error');
+    if (b && c && ca) document.getElementById('bl-error').classList.remove('visible');
+  }
+
+  function checkCamError() {
+    if (document.getElementById('cam-busto').value) {
+      document.getElementById('cam-busto').classList.remove('field-error');
+      document.getElementById('cam-error').classList.remove('visible');
+    }
+  }
+
+  function checkPijError() {
+    var b  = document.getElementById('pij-busto').value;
+    var ca = document.getElementById('pij-cadera').value;
+    if (b)  document.getElementById('pij-busto').classList.remove('field-error');
+    if (ca) document.getElementById('pij-cadera').classList.remove('field-error');
+    if (b && ca) document.getElementById('pij-error').classList.remove('visible');
+  }
+
+  /* ── Cálculos ── */
   function calcularBikinisLenceria() {
     var busto   = parseFloat(document.getElementById('bl-busto').value);
     var cintura = parseFloat(document.getElementById('bl-cintura').value);
     var cadera  = parseFloat(document.getElementById('bl-cadera').value);
     var jeanVal = document.getElementById('bl-jean').value;
 
-    if (isNaN(busto) || isNaN(cintura) || isNaN(cadera)) {
-      document.getElementById('bl-error').classList.add('visible');
-      return;
-    }
+    var hayError = false;
+    if (isNaN(busto))   { document.getElementById('bl-busto').classList.add('field-error');   hayError = true; }
+    if (isNaN(cintura)) { document.getElementById('bl-cintura').classList.add('field-error'); hayError = true; }
+    if (isNaN(cadera))  { document.getElementById('bl-cadera').classList.add('field-error');  hayError = true; }
+    if (hayError) { document.getElementById('bl-error').classList.add('visible'); return; }
     document.getElementById('bl-error').classList.remove('visible');
 
     var votos = [votarTalleBL(busto, 'busto'), votarTalleBL(cintura, 'cintura'), votarTalleBL(cadera, 'cadera')];
@@ -639,43 +711,85 @@ select:focus { border-color: var(--acento); }
     for (var t in conteo) {
       var n = parseInt(t);
       if (conteo[t] > maxVotos || (conteo[t] === maxVotos && n > talleResult)) {
-        maxVotos = conteo[t];
-        talleResult = n;
+        maxVotos = conteo[t]; talleResult = n;
       }
     }
 
     var info = tallasBlInfo[talleResult];
-    mostrarResultado(currentCategory === 'bikinis' ? 'Bikinis' : 'Lencería', info.label, 'equivale a ' + info.equiv);
+    mostrarResultado(currentCategory === 'bikinis' ? 'Bikinis' : 'Lencería', info.label, 'equivale a ' + info.equiv, null);
   }
 
   function calcularCamisolines() {
-    var busto = parseFloat(document.getElementById('cam-busto').value);
-    if (isNaN(busto)) { document.getElementById('cam-error').classList.add('visible'); return; }
+    var busto  = parseFloat(document.getElementById('cam-busto').value);
+    var altura = parseFloat(document.getElementById('cam-altura').value);
+
+    if (isNaN(busto)) {
+      document.getElementById('cam-busto').classList.add('field-error');
+      document.getElementById('cam-error').classList.add('visible');
+      return;
+    }
     document.getElementById('cam-error').classList.remove('visible');
+
     var talle = 5;
     for (var i = 0; i < tallaCamisolines.length; i++) {
       if (busto <= tallaCamisolines[i].max) { talle = tallaCamisolines[i].talle; break; }
     }
-    mostrarResultado('Camisolines', String(talle), '');
+
+    var aviso = null;
+    if (!isNaN(altura) && altura > 170) {
+      aviso = 'Con tu altura, el camisolín podría quedarte un poco más corto de lo esperado. Si preferís que cubra más, te recomendamos elegir un talle más.';
+    }
+
+    mostrarResultado('Camisolines', String(talle), '', aviso);
   }
 
   function calcularPijamas() {
-    var busto = parseFloat(document.getElementById('pij-busto').value);
-    if (isNaN(busto)) { document.getElementById('pij-error').classList.add('visible'); return; }
+    var busto  = parseFloat(document.getElementById('pij-busto').value);
+    var cadera = parseFloat(document.getElementById('pij-cadera').value);
+
+    var hayError = false;
+    if (isNaN(busto))  { document.getElementById('pij-busto').classList.add('field-error');  hayError = true; }
+    if (isNaN(cadera)) { document.getElementById('pij-cadera').classList.add('field-error'); hayError = true; }
+    if (hayError) { document.getElementById('pij-error').classList.add('visible'); return; }
     document.getElementById('pij-error').classList.remove('visible');
-    var res = tallaPijamas[tallaPijamas.length - 1];
-    for (var i = 0; i < tallaPijamas.length; i++) {
-      if (busto <= tallaPijamas[i].max) { res = tallaPijamas[i]; break; }
+
+    var talleBusto  = (function() {
+      var res = tallaPijamas[tallaPijamas.length - 1];
+      for (var i = 0; i < tallaPijamas.length; i++) {
+        if (busto <= tallaPijamas[i].max) { res = tallaPijamas[i]; break; }
+      }
+      return res;
+    })();
+
+    var numCadera = tallePorCadera(cadera);
+
+    var aviso = null;
+    var resFinal;
+    if (talleBusto.talle === numCadera) {
+      resFinal = talleBusto;
+    } else {
+      var talleNum = Math.max(talleBusto.talle, numCadera);
+      resFinal = tallaPijamas[talleNum - 1];
+      aviso = 'Como el conjunto se vende como una sola prenda (musculosa + short/pantalón), te recomendamos el talle mayor entre tu medida de busto y cadera para asegurar un buen calce en ambas partes.';
     }
-    mostrarResultado('Pijamas', String(res.talle), res.equiv + ' · pantalón ' + res.pantalon);
+
+    mostrarResultado('Pijamas', String(resFinal.talle), resFinal.equiv + ' · pantalón ' + resFinal.pantalon, aviso);
   }
 
-  function mostrarResultado(categoria, talle, equiv) {
+  function mostrarResultado(categoria, talle, equiv, aviso) {
     document.getElementById('result-category-label').textContent = categoria;
     document.getElementById('result-number').textContent = talle;
     var equivEl = document.getElementById('result-equiv');
     equivEl.textContent = equiv;
     equivEl.style.display = equiv ? 'block' : 'none';
+    var avisoEl = document.getElementById('result-aviso');
+    if (aviso) {
+      avisoEl.textContent = aviso;
+      avisoEl.classList.add('visible');
+    } else {
+      avisoEl.textContent = '';
+      avisoEl.classList.remove('visible');
+    }
     showScreen('screen-result');
   }
 
