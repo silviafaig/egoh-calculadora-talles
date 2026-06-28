@@ -225,12 +225,15 @@
   .valid-check {
     position: absolute;
     right: 11px;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--success);
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.18s;
+    font-family: var(--font);
+    font-style: normal;
   }
+  .valid-check::after { content: '\2713'; }
   .valid-check.visible { opacity: 1; }
 
   /* Validation states */
@@ -415,40 +418,18 @@
       <div class="cat-grid">
 
         <button class="cat-btn" onclick="selectCategory('bikinis')">
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="6" y1="14" x2="30" y2="14"/>
-            <polygon points="6,14 13,26 20,14"/>
-            <polygon points="16,14 23,26 30,14"/>
-            <path d="M6,14 Q10,8 18,10 Q26,8 30,14"/>
-          </svg>
           <span>Bikinis</span>
         </button>
 
         <button class="cat-btn" onclick="selectCategory('lenceria')">
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4,13 Q8,6 18,13 Q28,6 32,13"/>
-            <path d="M4,13 L7,26 L29,26 L32,13"/>
-            <path d="M15,13 Q18,17 21,13"/>
-            <path d="M4,13 Q6,11 9,13"/>
-            <path d="M27,13 Q30,11 32,13"/>
-          </svg>
           <span>Lencer&#237;a</span>
         </button>
 
         <button class="cat-btn" onclick="selectCategory('camisolines')">
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="13" y1="7" x2="11" y2="13"/>
-            <line x1="23" y1="7" x2="25" y2="13"/>
-            <path d="M11,13 L8,30 L28,30 L25,13 Z"/>
-            <path d="M11,13 Q18,16 25,13"/>
-          </svg>
           <span>Camisolines</span>
         </button>
 
         <button class="cat-btn" onclick="selectCategory('pijamas')">
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5,13 L12,8 L18,12 L24,8 L31,13 L28,20 L22,17 L22,30 L14,30 L14,17 L8,20 Z"/>
-          </svg>
           <span>Pijamas</span>
         </button>
 
@@ -491,7 +472,7 @@
         <label for="bl-jean">Talle de jean <span class="opt">(n&#250;mero argentino &#8212; opcional)</span></label>
         <div class="select-wrap">
           <select id="bl-jean">
-            <option value="">No s&#233; / no uso</option>
+            <option value="">No s&#233; / prefiero no decirlo</option>
             <option value="1">38</option>
             <option value="2">40</option>
             <option value="3">42</option>
